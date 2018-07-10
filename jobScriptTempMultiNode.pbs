@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+#PBS -N gnu-parallel-example
+#PBS -l select=250:ncpus=8:mem=8gb,walltime=02:23:00
+#PBS -j oe
+
+module add gnu-parallel
+
+locationOfData1='/dataFull'
+
+fullFilePath1=$PBS_O_WORKDIR$locationOfData1
+
+find  ${fullFilePath1} -type f | parallel --sshloginfile $PBS_NODEFILE -j 8 '
+        module add anaconda3/4.3.0;
+        source activate my_env;
+        fileLocation={};
+        cd ${fileLocation%dataFull/*}
+        temperature=20;
+        biasMax=1.25;
+        python tempFromDatsGNUParallel.py $biasMax $temperature $fileLocation'
+
